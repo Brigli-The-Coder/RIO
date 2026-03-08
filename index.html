@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIO — Coffeehouse & Brunch · Shkodër</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a2e1a;
+    --green-mid: #2d4a2d;
+    --green-soft: #3d6b3d;
+    --yellow-warm: #e8c84a;
+    --yellow-light: #f0d875;
+    --yellow-pale: #faf3d0;
+    --cream: #fdf8ee;
+    --cream-dark: #f5ecdc;
+    --text-dark: #1a2e1a;
+    --text-mid: #3d5a3d;
+    --gold: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--yellow-warm);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--green-soft);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0.6;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 24px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(250, 248, 238, 0.92);
+    backdrop-filter: blur(12px);
+    padding: 16px 48px;
+    box-shadow: 0 1px 0 rgba(26,46,26,0.08);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--cream);
+    text-decoration: none;
+    transition: color 0.4s;
+  }
+  nav.scrolled .nav-logo { color: var(--green-deep); }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(253,248,238,0.85);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--yellow-warm);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  nav.scrolled .nav-links a { color: var(--text-mid); }
+  nav.scrolled .nav-links a::after { background: var(--green-soft); }
+
+  /* HAMBURGER */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: none;
+    padding: 4px;
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    width: 32px;
+    height: 28px;
+    z-index: 1200;
+  }
+  .hamburger span {
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    background: var(--cream);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: center;
+    position: absolute;
+  }
+  .hamburger span:nth-child(1) { top: 4px; }
+  .hamburger span:nth-child(2) { top: 13px; }
+  .hamburger span:nth-child(3) { top: 22px; }
+
+  /* Scrolled state (when menu closed) */
+  .hamburger.scrolled-style span { background: var(--green-deep); }
+
+  /* When menu is open, always white */
+  .hamburger.open span { background: var(--cream) !important; }
+
+  /* X state */
+  .hamburger.open span:nth-child(1) {
+    top: 13px;
+    transform: rotate(45deg);
+  }
+  .hamburger.open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  .hamburger.open span:nth-child(3) {
+    top: 13px;
+    transform: rotate(-45deg);
+  }
+
+  /* Mobile menu overlay */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--green-deep);
+    z-index: 1050;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .mobile-menu.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .mobile-menu a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.4s ease, transform 0.4s ease, color 0.3s;
+  }
+  .mobile-menu.open a {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .mobile-menu.open a:nth-child(1) { transition-delay: 0.1s; }
+  .mobile-menu.open a:nth-child(2) { transition-delay: 0.18s; }
+  .mobile-menu.open a:nth-child(3) { transition-delay: 0.26s; }
+  .mobile-menu.open a:nth-child(4) { transition-delay: 0.34s; }
+  .mobile-menu a:hover { color: var(--yellow-warm); }
+
+  .mobile-menu-phone {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: rgba(253,248,238,0.5);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease 0.42s, transform 0.4s ease 0.42s;
+  }
+  .mobile-menu.open .mobile-menu-phone { opacity: 1; transform: translateY(0); }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      #1a2e1a 0%,
+      #2d4a2d 35%,
+      #1e3a20 60%,
+      #0f1f0f 100%
+    );
+    z-index: 0;
+  }
+
+  /* Texture overlay */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(232,200,74,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(61,107,61,0.3) 0%, transparent 50%);
+    z-index: 1;
+  }
+
+  /* Canvas for 3D particles */
+  #hero-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0.6;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--yellow-warm);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(6rem, 15vw, 14rem);
+    font-weight: 300;
+    line-height: 0.85;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.5s forwards;
+  }
+
+  .hero-slogan {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.85rem, 2vw, 1.1rem);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.3em;
+    color: rgba(253,248,238,0.65);
+    text-transform: uppercase;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green-deep);
+    background: var(--yellow-warm);
+    padding: 16px 40px;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s, letter-spacing 0.3s;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
+  .hero-cta:hover {
+    background: var(--yellow-light);
+    letter-spacing: 0.32em;
+  }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.5s forwards;
+  }
+  .hero-scroll-hint span {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(253,248,238,0.4);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, rgba(232,200,74,0.6), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  /* ─── 3D FOOD SCENE CANVAS ─── */
+  #food-canvas-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #food-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  /* ─── SECTIONS GENERAL ─── */
+  section {
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--green-soft);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--green-soft);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--green-deep);
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--green-soft);
+  }
+
+
+
+  /* ─── ABOUT ─── */
+  #about {
+    padding: 130px 48px;
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .about-visual {
+    position: relative;
+    height: 500px;
+    min-height: 400px;
+  }
+
+  .about-card {
+    position: absolute;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .about-card-main {
+    width: 75%;
+    height: 380px;
+    left: 0; top: 40px;
+    background: var(--green-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Animated gradient inside about card */
+  .about-card-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-soft) 100%);
+  }
+
+  .about-card-main-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px;
+  }
+
+  .about-cup-svg {
+    width: 120px;
+    opacity: 0.9;
+  }
+
+  .about-card-accent {
+    width: 55%;
+    height: 220px;
+    right: 0; bottom: 0;
+    background: var(--yellow-pale);
+    border: 1px solid rgba(232,200,74,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 24px;
+  }
+
+  .about-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--green-deep);
+    line-height: 1;
+  }
+  .about-stat-label {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .about-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-mid);
+  }
+  .about-desc em {
+    font-style: italic;
+    color: var(--green-deep);
+  }
+
+  .about-detail {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    opacity: 0.8;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 48px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .divider-line { flex: 1; height: 1px; background: rgba(26,46,26,0.1); }
+  .divider-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* ─── MENU ─── */
+  #menu {
+    padding: 120px 48px;
+    background: var(--green-deep);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #menu::before {
+    content: 'MENU';
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20vw;
+    font-weight: 700;
+    color: rgba(255,255,255,0.02);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .menu-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .menu-header {
+    margin-bottom: 70px;
+  }
+
+  .menu-header .section-label { color: var(--yellow-warm); }
+  .menu-header .section-label::before { background: var(--yellow-warm); }
+  .menu-header .section-title { color: var(--cream); }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .menu-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .menu-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--yellow-warm);
+    transition: width 0.4s ease;
+  }
+  .menu-item:hover::before { width: 100%; }
+  .menu-item:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(232,200,74,0.2);
+  }
+
+  .menu-item-emoji {
+    font-size: 2.2rem;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .menu-item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.2;
+  }
+
+  .menu-item-desc {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.78rem;
+    color: rgba(253,248,238,0.5);
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+  }
+
+  .menu-item-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--yellow-warm);
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ─── EXPERIENCE STRIP ─── */
+  #experience {
+    padding: 80px 0;
+    background: var(--yellow-warm);
+    overflow: hidden;
+  }
+
+  .exp-marquee {
+    display: flex;
+    gap: 60px;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+
+  .exp-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+  }
+
+  .exp-item span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--green-deep);
+    letter-spacing: 0.05em;
+  }
+
+  .exp-dot {
+    width: 6px; height: 6px;
+    background: var(--green-deep);
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+
+  /* ─── LOCATION ─── */
+  #location {
+    padding: 130px 48px;
+    background: var(--cream-dark);
+  }
+
+  .location-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .location-info {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-block-label {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--green-soft);
+  }
+
+  .info-block-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--green-deep);
+    line-height: 1.4;
+  }
+
+  .info-block-value a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(26,46,26,0.2);
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .info-block-value a:hover {
+    color: var(--green-soft);
+    border-color: var(--green-soft);
+  }
+
+  .map-container {
+    height: 420px;
+    background: var(--green-mid);
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .map-container iframe {
+    width: 100%; height: 100%;
+    border: none;
+    filter: contrast(1.05) saturate(0.85);
+  }
+
+  /* ─── CONTACT / FOOTER ─── */
+  #contact {
+    background: var(--green-deep);
+    padding: 100px 48px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #contact::before {
+    content: 'RIO';
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(8rem, 20vw, 18rem);
+    font-weight: 700;
+    color: rgba(255,255,255,0.025);
+    bottom: -40px;
+    right: -20px;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .contact-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .contact-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.15em;
+    line-height: 1;
+  }
+
+  .contact-logo-sub {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--yellow-warm);
+    margin-top: 6px;
+  }
+
+  .contact-phone {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--cream);
+  }
+  .contact-phone a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(253,248,238,0.2);
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .contact-phone a:hover {
+    color: var(--yellow-warm);
+    border-color: var(--yellow-warm);
+  }
+
+  .contact-social {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .social-link {
+    width: 44px; height: 44px;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: rgba(253,248,238,0.6);
+    transition: border-color 0.3s, color 0.3s, background 0.3s;
+  }
+  .social-link:hover {
+    border-color: var(--yellow-warm);
+    color: var(--yellow-warm);
+  }
+
+  .social-link svg { width: 18px; height: 18px; }
+
+  .contact-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .copyright {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: rgba(253,248,238,0.3);
+  }
+
+  .location-tag {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: rgba(253,248,238,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.9s cubic-bezier(0.23, 1, 0.32, 1), transform 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.9s cubic-bezier(0.23, 1, 0.32, 1), transform 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* ─── KEYFRAMES ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.6; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
+
+    /* ABOUT - stack cards vertically */
+    #about {
+      grid-template-columns: 1fr;
+      padding: 80px 24px 60px;
+      gap: 40px;
+    }
+    .about-visual {
+      height: auto;
+      min-height: unset;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .about-card { position: static; }
+    .about-card-main {
+      width: 100% !important;
+      height: 220px;
+      left: auto; top: auto;
+    }
+    .about-card-accent {
+      width: 100% !important;
+      height: auto;
+      right: auto; bottom: auto;
+      padding: 28px;
+      flex-direction: row;
+      justify-content: center;
+      gap: 28px;
+    }
+    .about-cup-svg { width: 80px; }
+    .section-title { font-size: clamp(2.2rem, 8vw, 3.5rem); }
+
+    .menu-grid { grid-template-columns: 1fr; }
+    #menu { padding: 80px 24px; }
+
+    .location-inner { grid-template-columns: 1fr; }
+    #location { padding: 80px 24px; }
+    .map-container { height: 300px; }
+
+    .contact-top { flex-direction: column; align-items: flex-start; }
+    #contact { padding: 80px 24px 48px; }
+
+    .divider { padding: 0 24px; }
+    .hero-title { font-size: clamp(5rem, 22vw, 8rem); }
+  }
+
+  @media (max-width: 600px) {
+    .hero-title { font-size: clamp(4.5rem, 28vw, 7rem); }
+    .mobile-menu a { font-size: 2.6rem; }
+    .contact-phone { font-size: 1.6rem; }
+    .about-card-accent { flex-direction: column; align-items: center; }
+    .contact-bottom { flex-direction: column; gap: 12px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#about" onclick="closeMobileMenu()">Rreth Nesh</a>
+  <a href="#menu" onclick="closeMobileMenu()">Menu</a>
+  <a href="#location" onclick="closeMobileMenu()">Lokacioni</a>
+  <a href="#contact" onclick="closeMobileMenu()">Kontakt</a>
+  <a href="https://search.google.com/local/writereview?placeid=ChIJl7065_UBThMR9LhCxtcOoec" target="_blank">Review</a>
+  <p class="mobile-menu-phone">+355 69 475 5560</p>
+</div>
+
+<!-- HAMBURGER (fixed, always above everything) -->
+<button class="hamburger" id="hamburger" aria-label="Menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">RIO</a>
+  <ul class="nav-links">
+    <li><a href="#about">Rreth Nesh</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#location">Lokacioni</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+    <li><a href="https://search.google.com/local/writereview?placeid=ChIJl7065_UBThMR9LhCxtcOoec" target="_blank">Review</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <canvas id="hero-canvas"></canvas>
+
+  <!-- 3D Food Canvas -->
+  <div id="food-canvas-wrap">
+    <canvas id="food-canvas"></canvas>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Shkodër, Albania · Est. 2005</p>
+    <h1 class="hero-title">RIO</h1>
+    <p class="hero-slogan">Coffeehouse &amp; Brunch</p>
+    <a href="#menu" class="hero-cta">Zbulo Menunë</a>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-visual reveal-left">
+    <div class="about-card about-card-main">
+      <div class="about-card-main-inner">
+        <!-- Coffee cup SVG -->
+        <svg class="about-cup-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Steam -->
+          <path d="M42 18 Q45 10 42 4" stroke="rgba(232,200,74,0.6)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M55 20 Q58 11 55 4" stroke="rgba(232,200,74,0.6)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M68 18 Q71 10 68 4" stroke="rgba(232,200,74,0.6)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- Cup body -->
+          <path d="M25 35 L35 105 Q55 120 85 105 L95 35 Z" fill="rgba(253,248,238,0.12)" stroke="rgba(253,248,238,0.35)" stroke-width="1.5"/>
+          <!-- Saucer -->
+          <ellipse cx="60" cy="112" rx="42" ry="8" fill="rgba(253,248,238,0.1)" stroke="rgba(253,248,238,0.3)" stroke-width="1.5"/>
+          <!-- Handle -->
+          <path d="M95 50 Q115 55 115 75 Q115 92 95 90" stroke="rgba(253,248,238,0.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Coffee surface -->
+          <ellipse cx="60" cy="42" rx="29" ry="6" fill="rgba(139,90,43,0.5)"/>
+          <!-- Latte art -->
+          <path d="M48 42 Q60 36 72 42 Q60 46 48 42" fill="rgba(232,200,74,0.4)"/>
+          <circle cx="60" cy="42" r="4" fill="rgba(232,200,74,0.3)"/>
+        </svg>
+        <p style="font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.3em;color:rgba(253,248,238,0.4);text-transform:uppercase;font-weight:200;">Specialty Coffee</p>
+      </div>
+    </div>
+    <div class="about-card about-card-accent">
+      <div class="about-stat-num">07:30</div>
+      <div class="about-stat-label">Çdo ditë · Nga mëngjesi</div>
+      <div style="width:40px;height:1px;background:rgba(26,46,26,0.15);margin:10px 0;"></div>
+      <div class="about-stat-label" style="text-align:center;color:var(--green-deep);opacity:0.7;font-size:0.65rem;">Shkodër · Albania</div>
+    </div>
+  </div>
+
+  <div class="about-text reveal-right" style="transition-delay:0.15s;">
+    <div>
+      <div class="section-label">Rreth Nesh</div>
+      <h2 class="section-title">Vendi ku mëngjesi<br>bëhet <em>art</em></h2>
+    </div>
+    <p class="about-desc">
+      Rio është më shumë se një kafene — është <em>rituali yti i mëngjesit</em>.
+      Specialty coffee e përgatitur me kujdes, brioshë të buta të freskëta nga furra,
+      dhe një atmosferë që të bën të ndihesh si në shtëpi.
+    </p>
+    <p class="about-detail">
+      I vendosur në zemër të Shkodrës, Rio ju ofron një hapësirë të ngrohtë
+      ku çdo filxhan kaffe shërbehet me dashuri dhe çdo vakt pregaditet
+      me ingredientë të freskëta. Brunch-i ynë ndryshon me stinën —
+      gjithmonë i freskët, gjithmonë i papritur.
+    </p>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="width:40px;height:1px;background:var(--green-soft);opacity:0.4;"></div>
+      <p style="font-family:'Jost',sans-serif;font-weight:200;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green-soft);">E Hënë — E Diel · 07:30 – 22:00</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider reveal">
+  <div class="divider-line"></div>
+  <span class="divider-icon">✦</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-inner">
+    <div class="menu-header reveal">
+      <div class="section-label">Çfarë Shërbejmë</div>
+      <h2 class="section-title" style="color:var(--cream);">Shijoje <em style="color:rgba(253,248,238,0.5);">çdo</em><br>çast</h2>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-item reveal" style="transition-delay:0s;">
+        <span class="menu-item-emoji">☕</span>
+        <div class="menu-item-name">Espresso Klasik</div>
+        <div class="menu-item-desc">Single origin beans, ekstrakti perfekt, krema e artë.</div>
+        <div class="menu-item-price">150 L</div>
+      </div>
+      <div class="menu-item reveal" style="transition-delay:0.08s;">
+        <span class="menu-item-emoji">🥐</span>
+        <div class="menu-item-name">Brioshë Gjalpë</div>
+        <div class="menu-item-desc">E freskët nga furra çdo mëngjes — e butë brenda, krokante jashtë.</div>
+        <div class="menu-item-price">200 L</div>
+      </div>
+      <div class="menu-item reveal" style="transition-delay:0.16s;">
+        <span class="menu-item-emoji">🍳</span>
+        <div class="menu-item-name">Brunch Plate</div>
+        <div class="menu-item-desc">Vezë, avokado, tost i artë dhe salcë speciale Rio.</div>
+        <div class="menu-item-price">600 L</div>
+      </div>
+      <div class="menu-item reveal" style="transition-delay:0.24s;">
+        <span class="menu-item-emoji">🥛</span>
+        <div class="menu-item-name">Cappuccino</div>
+        <div class="menu-item-desc">Milk foam artizanal, espresso double, art latte.</div>
+        <div class="menu-item-price">200 L</div>
+      </div>
+      <div class="menu-item reveal" style="transition-delay:0.32s;">
+        <span class="menu-item-emoji">🥞</span>
+        <div class="menu-item-name">Pancake Stack</div>
+        <div class="menu-item-desc">Blueberry compote, maple syrup, mentë të freskëta.</div>
+        <div class="menu-item-price">500 L</div>
+      </div>
+      <div class="menu-item reveal" style="transition-delay:0.40s;">
+        <span class="menu-item-emoji">🍵</span>
+        <div class="menu-item-name">Matcha Latte</div>
+        <div class="menu-item-desc">Ceremonial grade matcha, oat milk, pak mjaltë.</div>
+        <div class="menu-item-price">280 L</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE STRIP -->
+<section id="experience">
+  <div class="exp-marquee">
+    <!-- Doubled for seamless loop -->
+    <div class="exp-item"><span>Specialty Coffee</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Fresh Brunch</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Brioshë Artizanale</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Shkodër's Finest</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Latte Art</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Good Vibes</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Specialty Coffee</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Fresh Brunch</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Brioshë Artizanale</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Shkodër's Finest</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Latte Art</span><div class="exp-dot"></div></div>
+    <div class="exp-item"><span>Good Vibes</span><div class="exp-dot"></div></div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section id="location">
+  <div class="location-inner">
+    <div class="location-info reveal-left">
+      <div>
+        <div class="section-label">Na Gjej</div>
+        <h2 class="section-title">Vij e na<br><em>vizito</em></h2>
+      </div>
+
+      <div class="info-block">
+        <div class="info-block-label">Telefon</div>
+        <div class="info-block-value">
+          <a href="tel:+355694755560">+355 69 475 5560</a>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-block-label">Orari</div>
+        <div class="info-block-value">E Hënë — E Diel<br>07:30 – 22:00</div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-block-label">Lokacioni</div>
+        <div class="info-block-value">
+          <a href="https://www.google.com/maps/place/RIO+Breakfast+Bar/@42.0687275,19.509483,79m/data=!3m1!1e3!4m6!3m5!1s0x134e01f5e73abd97:0xe7a10ed7c642b8f4!8m2!3d42.0686275!4d19.5097741!16s%2Fg%2F11y5nncdy8" target="_blank">
+            RIO Breakfast Bar<br>Shkodër, Albania
+          </a>
+        </div>
+      </div>
+
+      <a href="https://www.google.com/maps/place/RIO+Breakfast+Bar/@42.0687275,19.509483,79m/data=!3m1!1e3!4m6!3m5!1s0x134e01f5e73abd97:0xe7a10ed7c642b8f4!8m2!3d42.0686275!4d19.5097741!16s%2Fg%2F11y5nncdy8" target="_blank"
+        style="display:inline-flex;align-items:center;gap:10px;font-family:'Jost',sans-serif;font-weight:300;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green-deep);text-decoration:none;border-bottom:1px solid var(--green-deep);padding-bottom:4px;transition:color 0.3s,border-color 0.3s;width:fit-content;">
+        Hap në Google Maps
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </a>
+    </div>
+
+    <div class="map-container reveal-right">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d79.2!2d19.509483!3d42.0687275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134e01f5e73abd97%3A0xe7a10ed7c642b8f4!2sRIO%20Breakfast%20Bar!5e1!3m2!1sen!2s!4v1710000000000!5m2!1sen!2s"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Rio Breakfast Bar - Google Maps">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / FOOTER -->
+<footer id="contact">
+  <div class="contact-inner">
+    <div class="contact-top reveal">
+      <div>
+        <div class="contact-logo">RIO</div>
+        <div class="contact-logo-sub">Coffeehouse &amp; Brunch · Shkodër</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-end;">
+        <div class="contact-phone">
+          <a href="tel:+355694755560">+355 69 475 5560</a>
+        </div>
+        <div class="contact-social">
+          <!-- Instagram -->
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+          <!-- Facebook -->
+          <a href="#" class="social-link" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+          <!-- Maps pin -->
+          <a href="https://www.google.com/maps/place/RIO+Breakfast+Bar/@42.0687275,19.509483" target="_blank" class="social-link" aria-label="Google Maps">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-bottom">
+      <p class="copyright">© 2025 RIO Coffeehouse & Brunch. Të gjitha të drejtat e rezervuara.</p>
+      <p class="location-tag">Shkodër · Albania</p>
+    </div>
+
+    <div style="padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
+      <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.82rem; letter-spacing:0.08em; color:rgba(253,248,238,0.45);">
+        Made professionally by&nbsp;
+        <a href="https://brigli-the-coder.com" target="_blank"
+          style="color:var(--yellow-warm); text-decoration:none; border-bottom:1px solid rgba(232,200,74,0.35); padding-bottom:1px; transition:color 0.3s, border-color 0.3s; font-weight:400; letter-spacing:0.05em;">
+          Brigli The Coder
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── THREE.JS via CDN ───
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+script.onload = initThree;
+document.head.appendChild(script);
+
+function initThree() {
+  // ── HERO PARTICLES CANVAS ──
+  const heroCanvas = document.getElementById('hero-canvas');
+  const heroRenderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
+  heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  heroRenderer.setSize(window.innerWidth, window.innerHeight);
+
+  const heroScene = new THREE.Scene();
+  const heroCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  heroCamera.position.z = 5;
+
+  // Particles
+  const pCount = 280;
+  const pGeo = new THREE.BufferGeometry();
+  const pPos = new Float32Array(pCount * 3);
+  const pSizes = new Float32Array(pCount);
+  for (let i = 0; i < pCount; i++) {
+    pPos[i * 3] = (Math.random() - 0.5) * 16;
+    pPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
+    pPos[i * 3 + 2] = (Math.random() - 0.5) * 6;
+    pSizes[i] = Math.random() * 2.5 + 0.5;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  pGeo.setAttribute('size', new THREE.BufferAttribute(pSizes, 1));
+
+  const pMat = new THREE.PointsMaterial({
+    color: 0xe8c84a,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.5,
+    sizeAttenuation: true,
+  });
+  const particles = new THREE.Points(pGeo, pMat);
+  heroScene.add(particles);
+
+  // ── FOOD SCENE CANVAS ──
+  const foodCanvas = document.getElementById('food-canvas');
+  const foodRenderer = new THREE.WebGLRenderer({ canvas: foodCanvas, alpha: true, antialias: true });
+  foodRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  foodRenderer.setSize(window.innerWidth, window.innerHeight);
+  foodRenderer.shadowMap.enabled = true;
+
+  const foodScene = new THREE.Scene();
+  const foodCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  foodCamera.position.set(0, 1, 7);
+  foodCamera.lookAt(0, 0, 0);
+
+  // Lighting
+  const ambLight = new THREE.AmbientLight(0xfdf8ee, 0.6);
+  foodScene.add(ambLight);
+
+  const keyLight = new THREE.DirectionalLight(0xf0d875, 2.5);
+  keyLight.position.set(3, 5, 3);
+  keyLight.castShadow = true;
+  foodScene.add(keyLight);
+
+  const fillLight = new THREE.PointLight(0xe8c84a, 1.5, 15);
+  fillLight.position.set(-3, 2, 2);
+  foodScene.add(fillLight);
+
+  const rimLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  rimLight.position.set(0, -2, -4);
+  foodScene.add(rimLight);
+
+  // ── COFFEE CUP ── (right side)
+  const cupGroup = new THREE.Group();
+  foodScene.add(cupGroup);
+
+  // Saucer
+  const saucerGeo = new THREE.CylinderGeometry(1.0, 0.85, 0.08, 48);
+  const saucerMat = new THREE.MeshStandardMaterial({
+    color: 0xfdf8ee,
+    roughness: 0.15,
+    metalness: 0.05,
+  });
+  const saucer = new THREE.Mesh(saucerGeo, saucerMat);
+  saucer.receiveShadow = true;
+  cupGroup.add(saucer);
+
+  // Cup body
+  const cupGeo = new THREE.CylinderGeometry(0.52, 0.38, 0.72, 48);
+  const cupMat = new THREE.MeshStandardMaterial({
+    color: 0xfdf8ee,
+    roughness: 0.12,
+    metalness: 0.08,
+  });
+  const cup = new THREE.Mesh(cupGeo, cupMat);
+  cup.position.y = 0.38;
+  cup.castShadow = true;
+  cupGroup.add(cup);
+
+  // Coffee surface inside
+  const coffeeGeo = new THREE.CylinderGeometry(0.48, 0.48, 0.06, 48);
+  const coffeeMat = new THREE.MeshStandardMaterial({
+    color: 0x3d1a0a,
+    roughness: 0.5,
+    metalness: 0.0,
+  });
+  const coffeeSurface = new THREE.Mesh(coffeeGeo, coffeeMat);
+  coffeeSurface.position.y = 0.70;
+  cupGroup.add(coffeeSurface);
+
+  // Crema (latte art hint)
+  const cremaGeo = new THREE.TorusGeometry(0.25, 0.10, 8, 32);
+  const cremaMat = new THREE.MeshStandardMaterial({
+    color: 0xc9a84c,
+    roughness: 0.8,
+  });
+  const crema = new THREE.Mesh(cremaGeo, cremaMat);
+  crema.rotation.x = Math.PI / 2;
+  crema.position.y = 0.73;
+  crema.scale.set(1, 1, 0.3);
+  cupGroup.add(crema);
+
+  // Handle using a torus half
+  const handleGeo = new THREE.TorusGeometry(0.28, 0.06, 12, 24, Math.PI);
+  const handle = new THREE.Mesh(handleGeo, cupMat);
+  handle.position.set(0.54, 0.38, 0);
+  handle.rotation.y = Math.PI / 2;
+  handle.rotation.z = Math.PI / 2;
+  cupGroup.add(handle);
+
+  // Cup rim stripe (green)
+  const rimGeo = new THREE.TorusGeometry(0.52, 0.025, 8, 48);
+  const rimMat = new THREE.MeshStandardMaterial({ color: 0x2d4a2d, roughness: 0.4 });
+  const rim = new THREE.Mesh(rimGeo, rimMat);
+  rim.position.y = 0.74;
+  cupGroup.add(rim);
+
+  cupGroup.position.set(2.2, -0.8, 0);
+  cupGroup.rotation.y = -0.3;
+
+  // ── BRIOSHË (Molto/Croissant shape) ── (left side)
+  const brioGroup = new THREE.Group();
+  foodScene.add(brioGroup);
+
+  // Main brioshë body - elongated rounded shape
+  const brioGeo = new THREE.SphereGeometry(0.72, 32, 20);
+  const brioMat = new THREE.MeshStandardMaterial({
+    color: 0xd4893a,
+    roughness: 0.75,
+    metalness: 0.02,
+  });
+  const brio = new THREE.Mesh(brioGeo, brioMat);
+  brio.scale.set(1.4, 0.7, 0.9);
+  brioGroup.add(brio);
+
+  // Top golden dome
+  const topGeo = new THREE.SphereGeometry(0.6, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  const topMat = new THREE.MeshStandardMaterial({
+    color: 0xc4780a,
+    roughness: 0.6,
+    metalness: 0.05,
+  });
+  const top = new THREE.Mesh(topGeo, topMat);
+  top.scale.set(1.3, 0.9, 0.85);
+  top.position.y = 0.18;
+  brioGroup.add(top);
+
+  // Golden sheen on top
+  const sheenGeo = new THREE.SphereGeometry(0.4, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2.5);
+  const sheenMat = new THREE.MeshStandardMaterial({
+    color: 0xe8b455,
+    roughness: 0.3,
+    metalness: 0.1,
+    transparent: true,
+    opacity: 0.6,
+  });
+  const sheen = new THREE.Mesh(sheenGeo, sheenMat);
+  sheen.scale.set(1.2, 0.7, 0.8);
+  sheen.position.y = 0.35;
+  brioGroup.add(sheen);
+
+  // Plate under brioshë
+  const plateGeo = new THREE.CylinderGeometry(1.1, 0.9, 0.07, 48);
+  const plateMat = new THREE.MeshStandardMaterial({
+    color: 0xfdf8ee,
+    roughness: 0.12,
+    metalness: 0.05,
+  });
+  const plate = new THREE.Mesh(plateGeo, plateMat);
+  plate.position.y = -0.55;
+  plate.receiveShadow = true;
+  brioGroup.add(plate);
+
+  // Plate rim
+  const plateRimGeo = new THREE.TorusGeometry(1.0, 0.06, 8, 48);
+  const plateRim = new THREE.Mesh(plateRimGeo, plateMat);
+  plateRim.position.y = -0.52;
+  brioGroup.add(plateRim);
+
+  // Sesame/powdered sugar dots on brioshë
+  for (let i = 0; i < 12; i++) {
+    const dotGeo = new THREE.SphereGeometry(0.03, 8, 8);
+    const dotMat = new THREE.MeshStandardMaterial({ color: 0xf5e8c0, roughness: 0.9 });
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    const angle = (i / 12) * Math.PI * 2;
+    const r = 0.35 + Math.random() * 0.3;
+    dot.position.set(
+      Math.cos(angle) * r * 1.3,
+      0.38 + Math.random() * 0.15,
+      Math.sin(angle) * r * 0.8
+    );
+    brioGroup.add(dot);
+  }
+
+  brioGroup.position.set(-2.2, -0.9, 0.5);
+  brioGroup.rotation.y = 0.4;
+
+  // ── STEAM PARTICLES ──
+  const steamParticles = [];
+  for (let i = 0; i < 18; i++) {
+    const sg = new THREE.SphereGeometry(0.04 + Math.random() * 0.04, 8, 8);
+    const sm = new THREE.MeshStandardMaterial({
+      color: 0xfdf8ee,
+      transparent: true,
+      opacity: 0.0,
+    });
+    const sp = new THREE.Mesh(sg, sm);
+    sp.position.set(
+      cupGroup.position.x + (Math.random() - 0.5) * 0.3,
+      cupGroup.position.y + 0.9 + Math.random() * 1.2,
+      cupGroup.position.z
+    );
+    sp.userData = {
+      speed: 0.005 + Math.random() * 0.008,
+      offset: Math.random() * Math.PI * 2,
+      baseY: cupGroup.position.y + 0.9 + Math.random() * 0.5,
+      life: Math.random(),
+    };
+    foodScene.add(sp);
+    steamParticles.push(sp);
+  }
+
+  // ── SCROLL ANIMATION STATE ──
+  let scrollProgress = 0;
+  let targetScrollProgress = 0;
+
+  // ── ANIMATION LOOP ──
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    // Hero particles
+    particles.rotation.y = t * 0.04;
+    particles.rotation.x = t * 0.015;
+
+    // Cup gentle float
+    cupGroup.position.y = -0.8 + Math.sin(t * 0.7) * 0.06;
+    cupGroup.rotation.y = -0.3 + Math.sin(t * 0.4) * 0.05;
+
+    // Brioshë gentle float (opposite phase)
+    brioGroup.position.y = -0.9 + Math.sin(t * 0.7 + 1.2) * 0.07;
+    brioGroup.rotation.y = 0.4 + Math.sin(t * 0.35) * 0.06;
+
+    // Scroll-based exit: brioshë exits left, cup exits right
+    scrollProgress += (targetScrollProgress - scrollProgress) * 0.06;
+
+    const exitDist = scrollProgress * 12;
+    brioGroup.position.x = -2.2 - exitDist;
+    cupGroup.position.x = 2.2 + exitDist;
+
+    // Fade opacity as they move
+    const opacity = Math.max(0, 1 - scrollProgress * 2.5);
+    brioGroup.children.forEach(c => {
+      if (c.material) {
+        c.material.transparent = true;
+        c.material.opacity = opacity * (c.material.opacity > 0.3 ? 1 : 0.6);
+      }
+    });
+    cupGroup.children.forEach(c => {
+      if (c.material) {
+        c.material.transparent = true;
+        c.material.opacity = opacity;
+      }
+    });
+
+    // Steam animation
+    steamParticles.forEach(sp => {
+      sp.userData.life += sp.userData.speed;
+      if (sp.userData.life > 1) sp.userData.life = 0;
+      const life = sp.userData.life;
+      sp.position.y = sp.userData.baseY + life * 1.5;
+      sp.position.x = cupGroup.position.x + Math.sin(life * Math.PI * 3 + sp.userData.offset) * 0.15;
+      sp.material.opacity = Math.sin(life * Math.PI) * 0.25;
+      sp.scale.setScalar(0.5 + life * 1.5);
+    });
+
+    foodRenderer.render(foodScene, foodCamera);
+    heroRenderer.render(heroScene, heroCamera);
+  }
+
+  animate();
+
+  // Scroll listener for food scene
+  window.addEventListener('scroll', () => {
+    const heroH = document.getElementById('hero').offsetHeight;
+    targetScrollProgress = Math.min(1, window.scrollY / (heroH * 0.6));
+  });
+
+  // Resize
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth, h = window.innerHeight;
+    heroCamera.aspect = w / h;
+    heroCamera.updateProjectionMatrix();
+    heroRenderer.setSize(w, h);
+    foodCamera.aspect = w / h;
+    foodCamera.updateProjectionMatrix();
+    foodRenderer.setSize(w, h);
+  });
+}
+
+
+
+
+
+// ─── NAVBAR SCROLL + HAMBURGER ───
+const navbar = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+let menuOpen = false;
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY > 60;
+  navbar.classList.toggle('scrolled', scrolled);
+  if (!menuOpen) hamburger.classList.toggle('scrolled-style', scrolled);
+});
+
+hamburger.addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  hamburger.classList.toggle('open', menuOpen);
+  mobileMenu.classList.toggle('open', menuOpen);
+  document.body.style.overflow = menuOpen ? 'hidden' : '';
+  if (menuOpen) hamburger.classList.remove('scrolled-style');
+});
+
+function closeMobileMenu() {
+  menuOpen = false;
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  document.body.style.overflow = '';
+  if (window.scrollY > 60) hamburger.classList.add('scrolled-style');
+}
+
+// ─── CUSTOM CURSOR ───
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mouseX = 0, mouseY = 0;
+let ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  ring.style.left = ringX + 'px';
+  ring.style.top = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+// Cursor hover states
+document.querySelectorAll('a, button, .menu-item').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '20px';
+    cursor.style.height = '20px';
+    ring.style.width = '54px';
+    ring.style.height = '54px';
+    ring.style.opacity = '0.9';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '10px';
+    cursor.style.height = '10px';
+    ring.style.width = '36px';
+    ring.style.height = '36px';
+    ring.style.opacity = '0.6';
+  });
+});
+
+// ─── SCROLL REVEAL ───
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
